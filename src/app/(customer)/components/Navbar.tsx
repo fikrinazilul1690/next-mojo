@@ -16,13 +16,13 @@ export default function Navbar() {
         </h1>
         <div className='flex flex-row justify-center sm:justify-evenly align-middle my-auto gap-10 text-lg lg:text-xl'>
           <Link href='/'>Home</Link>
-          <Link href='/'>Products</Link>
+          <Link href='/products'>Products</Link>
           <Link href='/'>About Us</Link>
         </div>
         <div className='flex flex-row gap-10'>
           {/* should use client component */}
           <div className='flex flex-row gap-4 my-auto'>
-            <Link href='/'>
+            <Link href='/products?search=Type to search...'>
               <LuSearch size={25} />
             </Link>
             <Link href='/'>
