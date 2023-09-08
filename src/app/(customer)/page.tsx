@@ -29,12 +29,12 @@ export default async function Home() {
           priority
         />
         <div className='max-w-[980px] mx-auto'>
-          <div className='mb-[43px] mt-[69px] flex justify-between'>
+          <div className='mb-[43px] mt-[69px] flex justify-between max-sm:mx-3'>
             <h3 className='text-xl font-bold'>Featured Products</h3>
             <CategoryFilter categories={categories} />
           </div>
           <FeaturedProducts />
-          <div className='h-[314px] mt-5 mb-3 flex flex-row justify-between items-center'>
+          <div className='h-fit sm:h-[314px] mt-5 mb-3 flex flex-col sm:flex-row sm:justify-between justify-center items-center'>
             <Slogan
               Icon='ribbon'
               title='Best Quality Product'

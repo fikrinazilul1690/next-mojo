@@ -1,9 +1,6 @@
 import { Suspense } from 'react';
 import LoginForm from './components/LoginForm';
-
-function SearchBarFallback() {
-  return <>placeholder</>;
-}
+import { Spinner } from '@nextui-org/spinner';
 
 export default function Login() {
   return (
@@ -13,7 +10,9 @@ export default function Login() {
           <h1 className='text-2xl font-bold mt-[93px] text-center mb-7'>
             Login
           </h1>
-          <Suspense fallback={<SearchBarFallback />}>
+          <Suspense
+            fallback={<Spinner size='lg' label='Loading...' color='default' />}
+          >
             <LoginForm className='flex flex-col justify-between gap-7' />
           </Suspense>
         </div>

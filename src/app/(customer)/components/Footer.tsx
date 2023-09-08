@@ -7,8 +7,8 @@ export default function Footer() {
   return (
     <footer className='text-center'>
       <span className='mt-12 bg-slate-500 h-[1px] block' />
-      <div className='max-w-[1340px] mx-auto flex justify-between flex-row mt-5'>
-        <div className='flex justify-between h-[200px] flex-col'>
+      <div className='max-w-[1340px] mx-auto flex justify-evenly sm:flex-row max-sm:gap-3 flex-col mt-5'>
+        <div className='flex justify-evenly sm:justify-between items-center h-[200px] flex-col'>
           <h2 className='text-xl font-semibold'>MOJOPAHIT FURNITUR</h2>
           <p className='break-words w-96 text-sm'>
             Mojopahit Furniture adalah toko yang menyediakan solusi terbaik
@@ -24,7 +24,7 @@ export default function Footer() {
             </Link>
           </div>
         </div>
-        <div className='flex flex-col w-[350px] justify-between'>
+        <div className='flex flex-col sm:w-[350px] sm:items-start items-center justify-between'>
           <h2 className='text-xl font-semibold'>HUBUNGI KAMI</h2>
           <div className='flex gap-2 justify-start items-center'>
             <FiMapPin size={20} />

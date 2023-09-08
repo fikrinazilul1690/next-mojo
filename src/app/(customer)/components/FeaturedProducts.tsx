@@ -7,7 +7,7 @@ export default function FeaturedProducts() {
   const products = useSelector(selectListFeaturedProducts);
 
   return (
-    <div className='gap-2 grid grid-cols-2 items-center sm:grid-cols-3 mx-auto'>
+    <div className='gap-2 grid grid-cols-1 items-center sm:grid-cols-3 mx-3 sm:mx-auto'>
       {products.length !== 0 ? (
         products.map((product) => (
           <ProductCard key={product.id} product={product} />

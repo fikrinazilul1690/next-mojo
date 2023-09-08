@@ -29,7 +29,17 @@ export default function RegisterForm(props: Props) {
   const toggleVisibility2 = () => setIsVisible2(!isVisible2);
 
   return (
-    <div {...props}>
+    <form
+      {...props}
+      onSubmit={(e) => {
+        e.preventDefault();
+        dispatch(register(registerValue)).then((res) => {
+          if (res.meta.requestStatus === 'fulfilled') {
+            router.replace('/login');
+          }
+        });
+      }}
+    >
       <Input
         isRequired
         classNames={{
@@ -188,19 +198,13 @@ export default function RegisterForm(props: Props) {
         }
       />
       <Button
+        type='submit'
         color='default'
         className='font-bold'
         isLoading={registerValue.status === 'loading'}
-        onClick={() =>
-          dispatch(register(registerValue)).then((res) => {
-            if (res.meta.requestStatus === 'fulfilled') {
-              router.replace('/login');
-            }
-          })
-        }
       >
         Daftar
       </Button>
-    </div>
+    </form>
   );
 }

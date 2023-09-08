@@ -103,7 +103,7 @@ export default function Navbar() {
         {status === 'loading' && (
           <NavbarContent key='skeleton' as='div' justify='end'>
             <Skeleton className='rounded-lg'>
-              <div className='h-10 w-[330px] rounded-lg bg-secondary'></div>
+              <div className='h-10 w-20 sm:w-[330px] rounded-lg bg-secondary'></div>
             </Skeleton>
           </NavbarContent>
         )}
@@ -116,6 +116,7 @@ export default function Navbar() {
             justify='end'
           >
             <Button
+              className='max-sm:hidden'
               size='md'
               startContent={<LuSearch size={18} />}
               onClick={onOpen}
@@ -273,6 +274,7 @@ export default function Navbar() {
             justify='end'
           >
             <Button
+              className='max-sm:hidden'
               size='md'
               startContent={<LuSearch size={18} />}
               onClick={onOpen}
@@ -280,7 +282,12 @@ export default function Navbar() {
               Type to search...
             </Button>
             <NavbarItem className='sm:flex hidden font-bold'>
-              <Link color='foreground' href={`/login?callbackUrl=${pathname}`}>
+              <Link
+                color='foreground'
+                href={`/login${
+                  pathname === '/register' ? '' : '?callbackUrl=' + pathname
+                }`}
+              >
                 Login
               </Link>
             </NavbarItem>
@@ -298,6 +305,15 @@ export default function Navbar() {
           </NavbarContent>
         )}
         <NavbarMenu>
+          <NavbarMenuItem key={'search-btn'}>
+            <Button
+              size='md'
+              startContent={<LuSearch size={18} />}
+              onClick={onOpen}
+            >
+              Type to search...
+            </Button>
+          </NavbarMenuItem>
           {menuItems.map((item, index) => (
             <NavbarMenuItem key={`${item}-${index}`}>
               <Link

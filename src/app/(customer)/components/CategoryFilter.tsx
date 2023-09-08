@@ -26,6 +26,9 @@ export default function CategoryFilter({ categories }: Props) {
   return (
     <RadioGroup
       className='gap-1 max-w-md'
+      classNames={{
+        wrapper: 'max-sm:justify-end',
+      }}
       orientation='horizontal'
       value={selected}
       onValueChange={setSelected}
