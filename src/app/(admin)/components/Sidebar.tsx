@@ -4,7 +4,7 @@ import { FaShop } from 'react-icons/fa6';
 import { TbTruckDelivery } from 'react-icons/tb';
 import { PiSignOut, PiUserList } from 'react-icons/pi';
 import SidebarLink from './SidebarLink';
-import UserNavigation from './UserNavigation';
+import UserNavigation from './Avatar';
 
 type Props = {
   className: string;

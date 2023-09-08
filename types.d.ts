@@ -1,7 +1,16 @@
 type MojoResponse<Type> = {
   code: number;
   status: string;
-  data: Type;
+  metadata?: MojoMetadata;
+  data?: Type;
+  errors: any;
+};
+
+type MojoMetadata = {
+  offset: number | null;
+  limit: number | null;
+  page_count: number;
+  total_count: number;
 };
 
 type UploadResponse = {
@@ -81,4 +90,75 @@ type CreateProductRequest = {
   };
   selections?: VariantSelection[];
   variants?: Variant[];
+};
+
+type RegisterRequest = {
+  name: string;
+  email: string;
+  phone: string;
+  password: string;
+  confirm_password: string;
+};
+
+type Selection = {
+  name: string;
+  options: Option[];
+};
+
+type Option = {
+  value: string;
+  hex_code?: string;
+};
+
+type Variant = {
+  sku: string;
+  variant_name?: string | null;
+  price: number;
+};
+
+type FileResponse = {
+  id: string;
+  name: string;
+  order?: number;
+  url: string;
+  uploaded_at: string;
+};
+
+type Category = {
+  name: string;
+};
+
+type Product = {
+  id: number;
+  name: string;
+  description?: string;
+  category: string;
+  dimension: {
+    width: number;
+    length: number;
+    height: number;
+    unit: string;
+  };
+  weight: {
+    value: number;
+    unit: string;
+  };
+  available: boolean;
+  featured: boolean;
+  customizable: boolean;
+  min_price?: number;
+  selections?: Selection[];
+  variant?: Variant[];
+  images: FileResponse[];
+  model?: FileResponse;
+};
+
+type ProductFilter = {
+  featured?: boolean;
+  customizable?: boolean;
+  available?: boolean;
+  category?: string;
+  offset?: number;
+  limit?: number;
+  search?: string;
 };

@@ -2,11 +2,10 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { redirect } from 'next/navigation';
 import { AiOutlineUser } from 'react-icons/ai';
 import { useSession } from 'next-auth/react';
 
-export default function SidebarLink() {
+export default function Avatar() {
   const { data: session, status } = useSession({
     required: false,
     // onUnauthenticated() {

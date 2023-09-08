@@ -12,16 +12,17 @@ declare module 'next-auth' {
   }
 
   interface User extends DefaultUser {
-    role: string;
-    phone: string;
+    id?: string;
+    role?: string;
+    phone?: string;
     birthdate?: string;
     gender?: string;
-    created_at: string;
-    session_id: string;
-    access_token: string;
-    access_token_expires_at: string;
-    refresh_token: string;
-    refresh_token_expires_at: string;
+    created_at?: string;
+    session_id?: string;
+    access_token?: string;
+    access_token_expires_at?: string;
+    refresh_token?: string;
+    refresh_token_expires_at?: string;
   }
 }
 
