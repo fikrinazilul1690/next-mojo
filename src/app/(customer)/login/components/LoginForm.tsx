@@ -48,7 +48,7 @@ export default function LoginForm(props: Props) {
   }, [login.email]);
 
   return (
-    <div {...props}>
+    <div className='flex flex-col gap-3 justify-center'>
       {!!errMsg && (
         <Card className='bg-[#FAA0BF] flex flex-row items-center'>
           <CardBody>
@@ -64,47 +64,10 @@ export default function LoginForm(props: Props) {
           </Button>
         </Card>
       )}
-      <Input
-        type='email'
-        label='Email'
-        variant='bordered'
-        labelPlacement='outside'
-        placeholder='Enter your email'
-        color={validationState === 'invalid' ? 'danger' : 'default'}
-        errorMessage={
-          validationState === 'invalid' && 'Please enter a valid email'
-        }
-        validationState={validationState}
-        onChange={(e) => dispatch(loginSlice.actions.setEmail(e.target.value))}
-      />
-      <Input
-        label='Password'
-        variant='bordered'
-        labelPlacement='outside'
-        placeholder='Enter your password'
-        endContent={
-          <button
-            className='focus:outline-none'
-            type='button'
-            onClick={toggleVisibility}
-          >
-            {isVisible ? (
-              <AiFillEyeInvisible className='text-2xl text-default-400 pointer-events-none' />
-            ) : (
-              <AiFillEye className='text-2xl text-default-400 pointer-events-none' />
-            )}
-          </button>
-        }
-        type={isVisible ? 'text' : 'password'}
-        onChange={(e) =>
-          dispatch(loginSlice.actions.setPassword(e.target.value))
-        }
-      />
-      <Button
-        color='default'
-        className='font-bold'
-        isLoading={isLoading}
-        onClick={() => {
+      <form
+        {...props}
+        onSubmit={(e) => {
+          e.preventDefault();
           setIsLoading(true);
           signIn('credentials', {
             email: login.email,
@@ -132,8 +95,55 @@ export default function LoginForm(props: Props) {
           });
         }}
       >
-        Masuk
-      </Button>
+        <Input
+          isRequired
+          type='email'
+          label='Email'
+          variant='bordered'
+          labelPlacement='outside'
+          placeholder='Enter your email'
+          color={validationState === 'invalid' ? 'danger' : 'default'}
+          errorMessage={
+            validationState === 'invalid' && 'Please enter a valid email'
+          }
+          validationState={validationState}
+          onChange={(e) =>
+            dispatch(loginSlice.actions.setEmail(e.target.value))
+          }
+        />
+        <Input
+          isRequired
+          label='Password'
+          variant='bordered'
+          labelPlacement='outside'
+          placeholder='Enter your password'
+          endContent={
+            <button
+              className='focus:outline-none'
+              type='button'
+              onClick={toggleVisibility}
+            >
+              {isVisible ? (
+                <AiFillEyeInvisible className='text-2xl text-default-400 pointer-events-none' />
+              ) : (
+                <AiFillEye className='text-2xl text-default-400 pointer-events-none' />
+              )}
+            </button>
+          }
+          type={isVisible ? 'text' : 'password'}
+          onChange={(e) =>
+            dispatch(loginSlice.actions.setPassword(e.target.value))
+          }
+        />
+        <Button
+          type='submit'
+          color='default'
+          className='font-bold'
+          isLoading={isLoading}
+        >
+          Masuk
+        </Button>
+      </form>
     </div>
   );
 }

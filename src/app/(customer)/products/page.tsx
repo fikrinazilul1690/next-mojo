@@ -2,7 +2,6 @@ import getProducts from '@/lib/getProducts';
 import CategoryFilter from './components/CategoryFilter';
 import PaginationComponent from './components/PaginationComponent';
 import ProductCard from './components/ProductCard';
-import Search from './components/Search';
 
 export default async function Products({
   params,
