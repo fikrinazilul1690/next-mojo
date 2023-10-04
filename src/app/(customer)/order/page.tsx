@@ -1,10 +1,12 @@
 import { Divider } from '@nextui-org/divider';
-import { Button } from '@nextui-org/button';
-import AddressCard from '../components/AddressCard';
-import ItemCard from '../components/ItemCard';
+import AddressCard from './components/AddressCard';
 import { IoIosArrowForward } from 'react-icons/io';
+import BankCard from './components/BankCard';
+import ListItems from './components/ListItems';
+import ShippingCard from './components/ShippingCard';
+import Checkout from './components/Checkout';
 
-export default function Order() {
+export default async function Order() {
   return (
     <div className='border py-3 px-7 max-w-3xl mx-auto mt-5 rounded-lg'>
       <h3 className='text-2xl font-semibold text-center'>Detail Pesanan</h3>
@@ -16,33 +18,22 @@ export default function Order() {
       <section className='my-4'>
         <h4 className='text-xl font-semibold'>Produk</h4>
         <Divider className='my-2' />
-        <ItemCard key='1' />
-        <ItemCard key='2' />
-        <ItemCard key='3' />
+        <ListItems />
       </section>
       <section className='my-4'>
         <h4 className='text-xl font-semibold'>Pengiriman</h4>
         <Divider className='my-2' />
-        <Button
-          className='w-full justify-between'
-          size='lg'
-          variant='light'
-          endContent={<IoIosArrowForward />}
-        >
-          Pilih Pengiriman
-        </Button>
+        <ShippingCard icon={<IoIosArrowForward />} />
       </section>
       <section className='my-4'>
         <h4 className='text-xl font-semibold'>Cara Pembayaran</h4>
         <Divider className='my-2' />
-        <Button
-          className='w-full justify-between'
-          size='lg'
-          variant='light'
-          endContent={<IoIosArrowForward />}
-        >
-          Pilih Bank
-        </Button>
+        <BankCard icon={<IoIosArrowForward />} />
+      </section>
+      <section className='my-4'>
+        <h4 className='text-xl font-semibold'>Total Belanja</h4>
+        <Divider className='my-2' />
+        <Checkout />
       </section>
     </div>
   );

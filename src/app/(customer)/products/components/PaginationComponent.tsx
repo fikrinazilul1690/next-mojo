@@ -8,9 +8,7 @@ type Props = {
   metadata: MojoMetadata;
 };
 
-export default function PaginationComponent(props: Props) {
-  const { metadata } = props;
-  console.log(metadata);
+export default function PaginationComponent({ className, metadata }: Props) {
   const offset: number = metadata.offset || 0;
   const limit: number = metadata.limit || 0;
   const router = useRouter();
@@ -22,7 +20,7 @@ export default function PaginationComponent(props: Props) {
       initialPage={Math.ceil(offset / limit) + 1}
       showControls
       color='default'
-      {...props}
+      className={className}
       onChange={(page) => {
         const current = new URLSearchParams(Array.from(searchParams.entries()));
         current.set('page', page.toString());

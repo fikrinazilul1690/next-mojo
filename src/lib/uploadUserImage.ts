@@ -12,5 +12,5 @@ export default async function uploadUserImage(file: File, accessToken: string) {
     }
   );
 
-  return response.json();
+  return await response.json();
 }

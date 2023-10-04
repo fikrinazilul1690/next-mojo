@@ -12,7 +12,7 @@ export default async function login(
       }),
     }
   );
-  const json = response.json();
+  const json = await response.json();
 
   return json;
 }

@@ -1,39 +1,35 @@
 import Image from 'next/image';
-import Link from 'next/link';
+import { Link } from '@nextui-org/link';
 import Slogan from './components/Slogan';
 import getProducts from '@/lib/getProducts';
-import StoreProducts from './components/StoreProducts';
 import FeaturedProducts from './components/FeaturedProducts';
-import CategoryFilter from './components/CategoryFilter';
 import getCategoreis from '@/lib/getCategories';
+import { Card, CardHeader, CardBody, CardFooter } from '@nextui-org/card';
 
 export default async function Home() {
+  const categoriesRes = await getCategoreis({ tags: ['category'] });
   const productsRes = await getProducts({
     limit: 6,
     offset: 0,
     featured: true,
   });
-  const categoriesRes = await getCategoreis();
-  const categories = categoriesRes.data || [];
-  const listProducts = productsRes.data || [];
   return (
     <>
-      <StoreProducts products={listProducts} />
       <main className='mx-auto relative'>
-        <Image
-          src='/cover.png'
-          alt='bg'
-          width={2880}
-          height={1920}
-          sizes='95.56vw'
-          priority
-        />
+        <div className='sm:h-[60vh] h-[30vh] relative'>
+          <Image
+            className='object-contain'
+            src='/cover.png'
+            alt='bg'
+            fill
+            priority
+          />
+        </div>
         <div className='max-w-[980px] mx-auto'>
-          <div className='mb-[43px] mt-[69px] flex justify-between max-sm:mx-3'>
-            <h3 className='text-xl font-bold'>Featured Products</h3>
-            <CategoryFilter categories={categories} />
-          </div>
-          <FeaturedProducts />
+          <FeaturedProducts
+            initialProductsRes={productsRes}
+            initialCategoriesRes={categoriesRes}
+          />
           <div className='h-fit sm:h-[314px] mt-5 mb-3 flex flex-col sm:flex-row sm:justify-between justify-center items-center'>
             <Slogan
               Icon='ribbon'
@@ -51,30 +47,39 @@ export default async function Home() {
               body='Produk kami menghadirkan kepercayaan dan kenyamanan dalam bertransaksi.'
             />
           </div>
-          <Link href='/'>
-            <div className='rounded-xl h-[331px] bg-gradient-to-r from-[#326373] from-0% to-[#11B1E3] to-100% grid grid-rows-4 grid-flow-col hover:from-[#11B1E3] hover:from-0% hover:to-[#326373] hover:to-100%'>
-              <h1 className='text-[28px] text-white text-center pt-[30px] col-span-2 font-bold'>
+          <Card
+            radius='lg'
+            className='grid sm:grid-cols-4 max-sm:mx-2 sm:px-14 sm:grid-rows-3 items-center justify-center bg-gradient-to-r from-[#326373] from-0% to-[#11B1E3] to-100% hover:from-[#11B1E3] hover:from-0% hover:to-[#326373] hover:to-100%'
+            isHoverable
+            isPressable
+            as={Link}
+            href={'/products?custom=true'}
+          >
+            <CardHeader className='sm:col-span-full row-span-1 justify-center'>
+              <h1 className='text-[28px] text-white font-bold text-center leading-10'>
                 &quot;Your Imagination, Our Creation: Unlocking Custom
                 Wonders!&quot;
               </h1>
-              <p className='text-white text-center text-xl col-span-2 mt-[41px] mb-[60px] ml-[90px] mr-24'>
+            </CardHeader>
+            <CardBody className='sm:row-span-2 h-full sm:col-span-3 justify-start gap-7'>
+              <p className='text-white text-center text-xl'>
                 Ekspresikan diri Anda dengan produk custom kami, menciptakan
                 hadiah tak terlupakan dan pengalaman yang istimewa.
               </p>
-              <p className='text-white text-center text-xl row-start-4 col-start-1 col-end-3 font-semibold'>
+              <p className='text-white text-center text-xl font-semibold'>
                 Custom Produk
               </p>
-              <div className='row-span-4 mt-12 mr-5'>
-                <Image
-                  src='/custom.png'
-                  width={298}
-                  height={240}
-                  alt='product'
-                  priority={false}
-                />
-              </div>
-            </div>
-          </Link>
+            </CardBody>
+            <CardFooter className='sm:col-start-4 sm:col-end-5 sm:row-start-2 sm:row-end-4 justify-center'>
+              <Image
+                src='/custom.png'
+                width={298}
+                height={240}
+                alt='product'
+                priority={false}
+              />
+            </CardFooter>
+          </Card>
         </div>
       </main>
     </>

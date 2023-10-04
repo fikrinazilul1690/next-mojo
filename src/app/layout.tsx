@@ -1,8 +1,9 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import AuthProvider from './context/AuthProvider';
-import { ReduxProvider } from '@/lib/provider';
+import AuthProvider from '@/app/context/AuthProvider';
+import RQProvider from '@/app/context/RQProvider';
+import { NextUILibProvider } from './context/NextUILibProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -20,7 +21,9 @@ export default async function RootLayout({
     <html lang='en'>
       <body className={inter.className}>
         <AuthProvider>
-          <ReduxProvider>{children}</ReduxProvider>
+          <RQProvider>
+            <NextUILibProvider>{children}</NextUILibProvider>
+          </RQProvider>
         </AuthProvider>
       </body>
     </html>

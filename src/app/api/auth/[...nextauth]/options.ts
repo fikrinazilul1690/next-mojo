@@ -29,12 +29,13 @@ export const options: NextAuthOptions = {
             ...data?.user,
           };
         }
-        throw new Error(JSON.stringify(res));
+        throw new Error(res.errors.message);
       },
     }),
   ],
   pages: {
     signIn: '/login',
+    error: '/login',
   },
   callbacks: {
     async signIn({ user }) {
@@ -43,11 +44,17 @@ export const options: NextAuthOptions = {
     // Ref: https://authjs.dev/guides/basics/role-based-access-control#persisting-the-role
     async jwt({ token, user }) {
       if (user?.role) token.role = user.role;
+      if (user?.access_token) token.accessToken = user.access_token;
+      if (user?.refresh_token) token.refreshToken = user.refresh_token;
       return token;
     },
     // If you want to use the role in client components
     async session({ session, token }) {
-      if (session?.user) session.user.role = token.role;
+      if (session?.user) {
+        session.user.role = token.role;
+      }
+      session.accessToken = token.accessToken;
+      session.refreshToken = token.accessToken;
       return session;
     },
   },

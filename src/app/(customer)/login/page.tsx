@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import LoginForm from './components/LoginForm';
-import { Spinner } from '@nextui-org/spinner';
+import LoginFormFallback from './components/LoginFormFallback';
 
 export default function Login() {
   return (
@@ -11,7 +11,9 @@ export default function Login() {
             Login
           </h1>
           <Suspense
-            fallback={<Spinner size='lg' label='Loading...' color='default' />}
+            fallback={
+              <LoginFormFallback className='flex flex-col justify-between gap-7' />
+            }
           >
             <LoginForm className='flex flex-col justify-between gap-7' />
           </Suspense>

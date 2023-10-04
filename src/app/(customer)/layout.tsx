@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import { NextUILibProvider } from '../context/NextUILibProvider';
-import { Session, getServerSession } from 'next-auth';
+import CheckoutProvider from '../store/CheckoutContext';
+import Toaster from '../components/Toaster';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -11,18 +11,15 @@ export const metadata: Metadata = {
 
 export default async function CustomerLayout({
   children,
-  params,
 }: {
   children: React.ReactNode;
-  params: {
-    session: Session;
-  };
 }) {
   return (
     <>
       <Navbar />
-      <NextUILibProvider>{children}</NextUILibProvider>
+      <CheckoutProvider>{children}</CheckoutProvider>
       <Footer />
+      <Toaster />
     </>
   );
 }

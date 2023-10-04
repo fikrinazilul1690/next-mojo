@@ -29,7 +29,7 @@ export default function UploadImage(props: Props) {
         onChange={async (e) => {
           e.preventDefault();
           const res = await uploadUserImage(e.target.files![0], '');
-          console.log(res.status);
+          // console.log(res.status);
         }}
       />
       <label

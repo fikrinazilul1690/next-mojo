@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import Sidebar from './components/Sidebar';
-import { NextUILibProvider } from '../context/NextUILibProvider';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -13,9 +12,9 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <NextUILibProvider>
+    <>
       <Sidebar className='col-span-1' />
       <main className='col-span-4'>{children}</main>
-    </NextUILibProvider>
+    </>
   );
 }

@@ -2,16 +2,18 @@ import Image from 'next/image';
 
 import { Card, CardBody } from '@nextui-org/card';
 import { Link } from '@nextui-org/link';
+import { formatIDR } from '@/lib/formatIDR';
 
 type Props = {
   product: Product;
 };
 
 export default function ProductCard({ product }: Props) {
+  const image = product.images.find((image) => image.order === 0);
   return (
     <Card
       as={Link}
-      href='#'
+      href={`/products/${product.id}`}
       isPressable
       isBlurred
       className='border-none bg-background/60 dark:bg-default-100/50'
@@ -22,10 +24,10 @@ export default function ProductCard({ product }: Props) {
           <div>
             <div className='h-[200px] w-[200px] relative'>
               <Image
-                alt={product.images[0].name}
+                alt={image?.name ?? 'undefined'}
                 fill
                 className='object-cover rounded-md'
-                src={product.images[0].url}
+                src={image?.url ?? ''}
               />
             </div>
           </div>
@@ -39,10 +41,7 @@ export default function ProductCard({ product }: Props) {
                 {product.category}
               </p>
               <h1 className='text-medium font-medium mt-2'>
-                {new Intl.NumberFormat('id-ID', {
-                  style: 'currency',
-                  currency: 'IDR',
-                }).format(product.min_price || 0)}
+                {formatIDR(product.min_price || 0)}
               </h1>
             </div>
             <p className='overflow-hidden'>

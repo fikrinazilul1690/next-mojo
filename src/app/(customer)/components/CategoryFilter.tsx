@@ -1,28 +1,25 @@
 'use client';
-import { filterFeaturedProduct, useDispatch } from '@/lib/redux';
+
 import { RadioGroup } from '@nextui-org/react';
 import { CustomRadio } from './CustomRadio';
-import { useState, useEffect } from 'react';
 
 type Props = {
   categories: Category[];
+  onValueChange: (params: string) => void;
+  currentValue: string;
+  defaultValue: string;
+  labelDefaultValue: string;
 };
 
-export default function CategoryFilter({ categories }: Props) {
-  const dispatch = useDispatch();
-  // if necessary change with redux
-  const [selected, setSelected] = useState<string>('');
-  useEffect(() => {
-    console.log(selected);
-    dispatch(
-      filterFeaturedProduct({
-        category: selected,
-        limit: 6,
-        offset: 0,
-      })
-    );
-  }, [selected]);
+// Todo: integrate with rtk query and revalidate
 
+export default function CategoryFilter({
+  categories,
+  onValueChange,
+  defaultValue,
+  labelDefaultValue,
+  currentValue,
+}: Props) {
   return (
     <RadioGroup
       className='gap-1 max-w-md'
@@ -30,10 +27,10 @@ export default function CategoryFilter({ categories }: Props) {
         wrapper: 'max-sm:justify-end',
       }}
       orientation='horizontal'
-      value={selected}
-      onValueChange={setSelected}
+      value={currentValue}
+      onValueChange={onValueChange}
     >
-      <CustomRadio value=''>all</CustomRadio>
+      <CustomRadio value={defaultValue}>{labelDefaultValue}</CustomRadio>
       {categories.map((val) => (
         <CustomRadio key={val.name} value={val.name}>
           {val.name}

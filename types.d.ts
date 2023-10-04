@@ -2,8 +2,13 @@ type MojoResponse<Type> = {
   code: number;
   status: string;
   metadata?: MojoMetadata;
-  data?: Type;
-  errors: any;
+  data: Type;
+  errors: ErrorResponse;
+};
+
+type ErrorResponse = {
+  message?: string;
+  [key: string]: Array<string>;
 };
 
 type MojoMetadata = {
@@ -11,6 +16,14 @@ type MojoMetadata = {
   limit: number | null;
   page_count: number;
   total_count: number;
+};
+
+type CheckoutItem = {
+  sku: string;
+  name: string;
+  image: string;
+  price: number;
+  quantity: number;
 };
 
 type UploadResponse = {
@@ -61,8 +74,10 @@ type VariantSelection = {
 };
 
 type Variant = {
+  sku: string;
+  stock?: number;
   variant_name: string;
-  price: string;
+  price: number;
 };
 
 type CreateProductRequest = {
@@ -100,7 +115,7 @@ type RegisterRequest = {
   confirm_password: string;
 };
 
-type Selection = {
+type SelectionProduct = {
   name: string;
   options: Option[];
 };
@@ -147,8 +162,8 @@ type Product = {
   featured: boolean;
   customizable: boolean;
   min_price?: number;
-  selections?: Selection[];
-  variant?: Variant[];
+  selections?: SelectionProduct[];
+  variant: Variant[];
   images: FileResponse[];
   model?: FileResponse;
 };
@@ -162,3 +177,84 @@ type ProductFilter = {
   limit?: number;
   search?: string;
 };
+
+type CustomerAddress = {
+  id: number;
+  label: string;
+  is_primary: boolean;
+  contact_name: string;
+  contact_phone: string;
+  address: string;
+  area_id: string;
+  province: string;
+  city: string;
+  district: string;
+  postal_code: string;
+  note?: string;
+};
+
+type ListAddresses = Array<CustomerAddress>;
+
+type StoreInformation = {
+  name: string;
+  phone: string;
+  email: string;
+  owner: string;
+  address: {
+    full_address: string;
+    area_id: string;
+    province: string;
+    city: string;
+    distruct: string;
+    postal_code: string;
+    address_note: string;
+  };
+};
+
+type Item = {
+  sku: string;
+  quantity: number;
+};
+
+type PricingRatePayload = {
+  address_id: number;
+  items: Array<Item>;
+};
+
+type Pricing = {
+  company: string;
+  courier_name: string;
+  courier_code: string;
+  courier_service_name: string;
+  courier_service_code: string;
+  type: string;
+  description: string;
+  duration: string;
+  shipment_duration_range: string;
+  shipment_duration_unit: string;
+  service_type: string;
+  shipping_type: string;
+  price: number;
+};
+
+type RateResponse = {
+  pricing: Array<Pricing>;
+};
+
+type CartItem = {
+  sku: string;
+  name: string;
+  price: number;
+  quantity: number;
+  total: number;
+  image: {
+    id: string;
+    name: string;
+    order: number;
+    url: string;
+    uploaded_at: string;
+  };
+  created_at: string;
+};
+
+type Bank = 'bca' | 'bni' | 'permata' | 'bri';

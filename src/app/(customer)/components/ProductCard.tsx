@@ -1,33 +1,29 @@
-// import Image from 'next/image';
-import { Image } from '@nextui-org/image';
+import Image from 'next/image';
+// import { Image } from '@nextui-org/image';
 import { Card, CardBody, CardFooter } from '@nextui-org/card';
 import { Link } from '@nextui-org/link';
+import { formatIDR } from '@/lib/formatIDR';
 
 type Props = {
   product: Product;
 };
 
 export default function ProductCard({ product }: Props) {
+  const image = product.images.find((image) => image.order === 0);
   return (
-    <Card shadow='sm' key={product.id} isPressable as={Link} href='#'>
-      <CardBody className='overflow-visible p-0'>
+    <Card shadow='sm' isPressable as={Link} href={`/products/${product.id}`}>
+      <CardBody className='h-[300px] w-full relative overflow-visible p-0'>
         <Image
-          shadow='none'
-          radius='lg'
-          width='100%'
-          alt={product.images[0].name}
-          className='w-full object-cover h-[300px]'
-          src={product.images[0].url}
+          fill
+          alt={image?.name ?? 'undefined'}
+          className='w-full object-cover rounded-lg'
+          src={image?.url ?? ''}
+          priority
         />
       </CardBody>
       <CardFooter className='text-small justify-between'>
-        <b>{product.name}</b>
-        <p className='text-default-500'>
-          {new Intl.NumberFormat('id-ID', {
-            style: 'currency',
-            currency: 'IDR',
-          }).format(product.min_price || 0)}
-        </p>
+        <p>{product.name}</p>
+        <p className='text-default-500'>{formatIDR(product.min_price || 0)}</p>
       </CardFooter>
     </Card>
   );

@@ -2,6 +2,8 @@ import getProducts from '@/lib/getProducts';
 import CategoryFilter from './components/CategoryFilter';
 import PaginationComponent from './components/PaginationComponent';
 import ProductCard from './components/ProductCard';
+import { Suspense } from 'react';
+import { Spinner } from '@nextui-org/spinner';
 
 export default async function Products({
   params,
@@ -10,20 +12,25 @@ export default async function Products({
   params: { slug: string };
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const search = (searchParams.search as string) || '';
+  const search = (searchParams.search as string) ?? '';
   const limit = !!searchParams?.limit
     ? parseInt(searchParams.limit as string)
     : 10;
+  const customizable = !!searchParams.custom
+    ? (searchParams.custom as string) === 'true'
+    : undefined;
   const page = !!searchParams?.page ? parseInt(searchParams.page as string) : 1;
   const offset = (page - 1) * limit;
   const productsRes = await getProducts({
-    limit: limit,
-    offset: offset,
-    search: search,
+    limit,
+    offset,
+    search,
+    customizable,
   });
   const listProducts = productsRes.data || [];
   const metadata = productsRes?.metadata!;
-  console.log(productsRes);
+  // console.log(metadata);
+  // console.log(productsRes);
   return (
     <main className='grid grid-cols-12 gap-y-4 gap-x-2'>
       <section className='col-start-2 col-end-5'>
@@ -35,7 +42,11 @@ export default async function Products({
         {listProducts.map((val) => (
           <ProductCard key={val.id} product={val} />
         ))}
-        <PaginationComponent metadata={metadata} className='mx-auto' />
+        <Suspense
+          fallback={<Spinner size='lg' label='Loading...' color='default' />}
+        >
+          <PaginationComponent metadata={metadata} className='mx-auto' />
+        </Suspense>
       </section>
     </main>
   );

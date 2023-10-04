@@ -1,6 +1,5 @@
 // Ref: https://next-auth.js.org/configuration/nextjs#advanced-usage
 import { getToken } from 'next-auth/jwt';
-import { notFound } from 'next/navigation';
 import { NextRequest, NextResponse } from 'next/server';
 
 export default async function middleware(request: NextRequest) {
@@ -22,9 +21,9 @@ export default async function middleware(request: NextRequest) {
       pathname === '/my-orders' ||
       pathname === '/order'
     ) {
-      return NextResponse.redirect(
-        new URL(`/login?callbackUrl=${pathname}`, request.url)
-      );
+      const url = new URL(`/login`, request.url);
+      url.searchParams.set('callbackUrl', pathname);
+      return NextResponse.redirect(url);
     }
   }
 }
