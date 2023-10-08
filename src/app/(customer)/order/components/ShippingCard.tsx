@@ -7,8 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import getPricing from '@/lib/getPricing';
 import { formatIDR } from '@/lib/formatIDR';
 import { useCheckout } from '@/app/store/CheckoutContext';
-import { getSession } from 'next-auth/react';
-import useStore from '@/lib/hooks/useStore';
+import { useSession } from 'next-auth/react';
 
 type Props = {
   icon: JSX.Element;
@@ -16,35 +15,36 @@ type Props = {
 
 export default function ShippingCard({ icon }: Props) {
   const checkout = useCheckout();
-  const { data: address } = useStore(checkout, (state) => state.address);
-  const { data: items } = useStore(checkout, (state) => state.items);
+  const { data: session } = useSession();
+  const address = checkout((state) => state.address);
+  const items = checkout((state) => state.items);
   const courierService = checkout((state) => state.courierService);
   const setCourier = checkout((state) => state.setCourier);
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  const areaId = address?.area_id ?? '';
-
   const { data: res } = useQuery({
-    queryKey: ['shipping', areaId],
-    queryFn: async () => {
-      const session = await getSession();
+    queryKey: ['shipping', session?.accessToken, address?.id],
+    queryFn: async ({ signal }) => {
       const accessToken = session?.accessToken ?? '';
-      const data = await getPricing({
-        accessToken,
-        payload: {
-          address_id: address?.id ?? 0,
-          items:
-            items?.map<Item>((item) => ({
-              sku: item.sku,
-              quantity: item.quantity,
-            })) ?? [],
+      const data = await getPricing(
+        {
+          accessToken,
+          payload: {
+            address_id: address?.id ?? 0,
+            items:
+              items?.map<Item>((item) => ({
+                sku: item.sku,
+                quantity: item.quantity,
+              })) ?? [],
+          },
         },
-      });
+        { signal }
+      );
 
       return data;
     },
-    enabled: items?.length !== 0 && !!address,
+    enabled: !!session?.accessToken && items?.length !== 0 && !!address,
   });
 
   return (

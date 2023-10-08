@@ -11,7 +11,13 @@ type Props = {
 export default function ProductCard({ product }: Props) {
   const image = product.images.find((image) => image.order === 0);
   return (
-    <Card shadow='sm' isPressable as={Link} href={`/products/${product.id}`}>
+    <Card
+      shadow='sm'
+      className='max-sm:w-4/5 max-sm:m-auto'
+      isPressable
+      as={Link}
+      href={`/products/${product.id}`}
+    >
       <CardBody className='h-[300px] w-full relative overflow-visible p-0'>
         <Image
           fill

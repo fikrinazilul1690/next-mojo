@@ -3,10 +3,10 @@ type Props = {
   payload: PricingRatePayload;
 };
 
-export default async function getPricing({
-  accessToken,
-  payload,
-}: Props): Promise<MojoResponse<RateResponse>> {
+export default async function getPricing(
+  { accessToken, payload }: Props,
+  options?: { next?: NextFetchRequestConfig; signal?: AbortSignal }
+): Promise<MojoResponse<RateResponse>> {
   const response = await fetch(
     'https://toko-mojopahit-production.up.railway.app/v1/rates',
     {
@@ -15,6 +15,7 @@ export default async function getPricing({
         Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify(payload),
+      ...options,
     }
   );
 

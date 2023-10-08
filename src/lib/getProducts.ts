@@ -1,5 +1,6 @@
 export default async function getProducts(
-  params?: ProductFilter
+  params?: ProductFilter,
+  options?: { next?: NextFetchRequestConfig; signal?: AbortSignal }
 ): Promise<MojoResponse<Product[]>> {
   const asArray = Object.entries(params ?? {});
   const newParams = Object.fromEntries(
@@ -14,6 +15,7 @@ export default async function getProducts(
       new URLSearchParams({ ...newParams }),
     {
       method: 'GET',
+      ...options,
     }
   );
   const json = (await response.json()) as MojoResponse<Product[]>;

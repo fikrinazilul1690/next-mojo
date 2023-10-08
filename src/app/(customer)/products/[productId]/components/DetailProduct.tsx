@@ -3,57 +3,23 @@
 import { Card } from '@nextui-org/card';
 import ProductImages from './ProductImages';
 import ProductInformation from './ProductInformation';
-import { ChangeEvent, useReducer } from 'react';
+import { ChangeEvent, useState } from 'react';
 import ProductAction from './ProductAction';
-import { useQuery } from '@tanstack/react-query';
-import getProduct from '@/lib/getProduct';
 
 type Props = {
   product: Product;
 };
 
-type SelectedState = Variant;
-export type SelectedAction = {
-  type: SelectedActionKind;
-  payload: Variant;
-};
-
-enum SelectedActionKind {
-  SetItem = 'SET_ITEM',
-}
-
-function reducer(state: SelectedState, action: SelectedAction) {
-  const { type, payload } = action;
-  switch (type) {
-    case SelectedActionKind.SetItem:
-      return payload;
-    default:
-      return state;
-  }
-}
-
-export default function DetailProduct({ product: initialProduct }: Props) {
-  const { data: product } = useQuery({
-    queryKey: ['product'],
-    queryFn: async () => {
-      const res = await getProduct(initialProduct.id);
-      return res.data;
-    },
-    initialData: initialProduct,
-  });
-
+export default function DetailProduct({ product }: Props) {
   const initialState: Variant = product.variant.reduce((prev, curr) =>
     prev.price < curr.price ? prev : curr
   );
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [variant, setVariant] = useState<Variant>(initialState);
 
   function onVariantChange(e: ChangeEvent<HTMLSelectElement>) {
-    const item = product.variant.find((val) => val.sku === e.target.value);
+    const item = product?.variant.find((val) => val.sku === e.target.value);
     if (!!item) {
-      dispatch({
-        type: SelectedActionKind.SetItem,
-        payload: item,
-      });
+      setVariant(item);
     }
   }
 
@@ -63,12 +29,12 @@ export default function DetailProduct({ product: initialProduct }: Props) {
         <ProductImages product={product} />
       </section>
       <section>
-        <ProductInformation product={product} selectedVariant={state} />
+        <ProductInformation product={product} selectedVariant={variant} />
       </section>
       <section className='max-lg:w-full'>
         <ProductAction
           product={product}
-          selectedVariant={state}
+          selectedVariant={variant}
           onVariantChange={onVariantChange}
         />
       </section>

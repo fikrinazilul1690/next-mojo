@@ -69,7 +69,7 @@ export const Header = memo(function Header({ onOpen }: Props) {
       </NavbarContent>
       <NavbarContent justify='start'>
         <NavbarBrand>
-          <p className='font-bold text-center text-2xl'>
+          <p className='font-bold text-center text-lg sm:text-2xl'>
             Mojopahit
             <br />
             Furniture
@@ -108,12 +108,11 @@ export const Header = memo(function Header({ onOpen }: Props) {
         <Skeleton
           classNames={{
             base: [
-              'h-2/3',
-              cn(`${status === 'loading' && 'rounded-lg'}`),
-              cn(`${status === 'loading' ? 'w-5/12' : ''}`),
+              'h-2/3 rounded-lg',
+              cn(`${status === 'loading' ? 'w-5/12 max-sm:w-[101px]' : ''}`),
               'flex items-center justify-end',
             ],
-            content: ['flex justify-end gap-4 items-center p-2'],
+            content: ['flex justify-end gap-2 sm:gap-4 items-center p-2'],
           }}
           isLoaded={status !== 'loading'}
         >

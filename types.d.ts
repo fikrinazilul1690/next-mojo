@@ -257,4 +257,16 @@ type CartItem = {
   created_at: string;
 };
 
+type DetailPayment = {
+  id: string;
+  order_id: string;
+  status: string;
+  type: string;
+  bank: string;
+  va_number: string;
+  gross_amount: number;
+  expery_time: string;
+  created_at: string;
+};
+
 type Bank = 'bca' | 'bni' | 'permata' | 'bri';

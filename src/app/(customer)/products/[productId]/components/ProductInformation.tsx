@@ -34,7 +34,7 @@ export default function ProductInformation({
         <span>Category: {product.category}</span>
         <span className='font-bold text-lg'>{formatIDR(price)}</span>
       </CardHeader>
-      <CardBody className='py-0 flex gap-5'>
+      <CardBody className='p-0 flex gap-5'>
         <div>
           <span className='font-bold'>Description:</span>
           <p>{product.description || 'no product description'}</p>

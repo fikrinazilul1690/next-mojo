@@ -8,7 +8,7 @@ import Checkout from './components/Checkout';
 
 export default async function Order() {
   return (
-    <div className='border py-3 px-7 max-w-3xl mx-auto mt-5 rounded-lg'>
+    <main className='border py-3 px-7 max-w-3xl mx-auto mt-5 rounded-lg'>
       <h3 className='text-2xl font-semibold text-center'>Detail Pesanan</h3>
       <section className='my-4'>
         <h4 className='text-xl font-semibold'>Alamat</h4>
@@ -35,6 +35,6 @@ export default async function Order() {
         <Divider className='my-2' />
         <Checkout />
       </section>
-    </div>
+    </main>
   );
 }

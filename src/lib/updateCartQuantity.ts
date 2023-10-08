@@ -24,7 +24,7 @@ export default async function updateCartQuantity(
   const json = (await response.json()) as MojoResponse<{ message: string }>;
 
   if (json.code !== 200) {
-    throw json.errors;
+    throw json;
   }
 
   return json;

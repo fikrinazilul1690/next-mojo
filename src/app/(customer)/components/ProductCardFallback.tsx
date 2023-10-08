@@ -4,7 +4,7 @@ import { Skeleton } from '@nextui-org/skeleton';
 
 export default function ProductCardFallback() {
   return (
-    <Card shadow='sm'>
+    <Card shadow='sm' className='max-sm:w-3/4'>
       <CardBody className='overflow-visible p-0'>
         <Skeleton className='rounded-lg'>
           <div className='w-full object-cover h-[300px]'></div>

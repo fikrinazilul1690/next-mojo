@@ -84,6 +84,7 @@ export const createStore = () =>
               ([key]) => !['courierService'].includes(key)
             )
           ),
+        skipHydration: true,
       }
     )
   );

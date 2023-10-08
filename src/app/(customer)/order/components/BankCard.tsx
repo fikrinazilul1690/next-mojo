@@ -5,43 +5,18 @@ import { Modal, ModalContent, ModalHeader, ModalBody } from '@nextui-org/modal';
 import { cn, useDisclosure } from '@nextui-org/react';
 import Image from 'next/image';
 import { useCheckout } from '@/app/store/CheckoutContext';
-import useStore from '@/lib/hooks/useStore';
+import { listBank } from '@/lib/bank';
+// import useStore from '@/lib/hooks/useStore';
 
 type Props = {
   icon: JSX.Element;
 };
 
-const listBank: Array<{
-  code: Bank;
-  name: string;
-  imageUrl: string;
-}> = [
-  {
-    code: 'bca',
-    name: 'Bank BCA',
-    imageUrl: '/bca.png',
-  },
-  {
-    code: 'bni',
-    name: 'Bank BNI',
-    imageUrl: '/bni.png',
-  },
-  {
-    code: 'bri',
-    name: 'Bank BRI',
-    imageUrl: '/bri.png',
-  },
-  {
-    code: 'permata',
-    name: 'Bank Permata',
-    imageUrl: '/permata_bank.png',
-  },
-];
-
 export default function BankCard({ icon }: Props) {
   const checkout = useCheckout();
   const setBankToStorage = checkout((state) => state.setBank);
-  const { data: bank, isLoading } = useStore(checkout, (state) => state.bank);
+  // const { data: bank, isLoading } = useStore(checkout, (state) => state.bank);
+  const bank = checkout((state) => state.bank);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   return (

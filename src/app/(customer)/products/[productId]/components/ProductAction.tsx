@@ -60,7 +60,7 @@ export default function ProductAction({
       return addToCart({ accessToken, body });
     },
     onSuccess: () => {
-      alert('success');
+      toast.success('produk berhasil ditambakan ke keranjang');
       queryClient.invalidateQueries(['cart']);
     },
     onError: (error, variables, context) => {

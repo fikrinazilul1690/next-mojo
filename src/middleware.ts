@@ -15,6 +15,15 @@ export default async function middleware(request: NextRequest) {
     if (pathname.startsWith('/dashboard') && token.role === 'customer') {
       return NextResponse.redirect(new URL('/', request.url));
     }
+
+    if (
+      (pathname.startsWith('/settings') ||
+        pathname === '/my-orders' ||
+        pathname === '/order') &&
+      token.role !== 'customer'
+    ) {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
   } else {
     if (
       pathname.startsWith('/settings') ||

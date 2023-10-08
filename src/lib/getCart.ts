@@ -1,10 +1,6 @@
-type Props = {
-  accessToken: string;
-};
-
 export default async function getCart(
-  { accessToken }: Props,
-  nextOption?: NextFetchRequestConfig
+  accessToken: string,
+  options?: { next?: NextFetchRequestConfig; signal?: AbortSignal }
 ): Promise<MojoResponse<CartItem[]>> {
   const response = await fetch(
     `https://toko-mojopahit-production.up.railway.app/v1/carts`,
@@ -12,7 +8,7 @@ export default async function getCart(
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
-      next: nextOption,
+      ...options,
     }
   );
   const json = await response.json();

@@ -14,7 +14,9 @@ export default async function Addresses() {
     redirect(`/login?${searchParams}`);
   }
   const addressRes = await getAddresses(session.accessToken, {
-    tags: ['address'],
+    next: {
+      tags: ['address'],
+    },
   });
   return (
     <div className='flex flex-col gap-3 items-center justify-center'>

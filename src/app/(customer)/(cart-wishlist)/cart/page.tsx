@@ -11,6 +11,6 @@ export default async function Cart() {
     searchParams.set('callbackUrl', '/cart');
     redirect(`/login?${searchParams}`);
   }
-  const cartResponse = await getCart({ accessToken: session.accessToken });
-  return <TableCart carts={cartResponse.data} />;
+  const cartResponse = await getCart(session.accessToken);
+  return <TableCart cart={cartResponse.data} />;
 }

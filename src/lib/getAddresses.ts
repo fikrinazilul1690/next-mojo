@@ -1,6 +1,6 @@
 export default async function getAddresses(
   accessToken: string,
-  nextOption?: NextFetchRequestConfig
+  options?: { next?: NextFetchRequestConfig; signal?: AbortSignal }
 ): Promise<MojoResponse<ListAddresses>> {
   const response = await fetch(
     'https://toko-mojopahit-production.up.railway.app/v1/users/addresses',
@@ -9,6 +9,7 @@ export default async function getAddresses(
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
+      ...options,
     }
   );
 

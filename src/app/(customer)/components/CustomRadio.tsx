@@ -40,7 +40,6 @@ export const CustomRadio = (props: Props) => {
   });
 
   const styles = checkbox({ isSelected, isFocusVisible });
-
   return (
     <label {...getBaseProps()}>
       <VisuallyHidden>

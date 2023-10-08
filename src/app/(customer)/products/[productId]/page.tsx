@@ -10,18 +10,17 @@ export default async function DetailProductPage({
 }) {
   const productId = Number(params.productId);
   if (!productId) notFound();
-  const { data: product, code } = await getProduct(productId, {
-    tags: ['product'],
+  const product = await getProduct(productId, {
+    next: {
+      tags: ['product'],
+    },
   });
-  if (code === 404) notFound();
-  if (!!product)
-    return (
-      <>
-        <main>
-          <DetailProduct product={product} />
-        </main>
-      </>
-    );
+  if (!product) notFound();
+  return (
+    <main>
+      <DetailProduct product={product} />
+    </main>
+  );
 }
 
 export async function generateStaticParams() {

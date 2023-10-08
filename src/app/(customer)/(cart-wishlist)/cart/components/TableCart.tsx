@@ -14,7 +14,7 @@ import getCart from '@/lib/getCart';
 import { formatIDR } from '@/lib/formatIDR';
 import { useEffect, useMemo, useState } from 'react';
 import deleteCart from '@/lib/deleteCart';
-import { getSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import updateCartQuantity from '@/lib/updateCartQuantity';
 import { debounce } from 'lodash';
 import toast from 'react-hot-toast';
@@ -22,9 +22,10 @@ import EmptyCart from './EmptyCart';
 import CartCheckout from './CartCheckout';
 import { useRouter } from 'next/navigation';
 import { useCheckout } from '@/app/store/CheckoutContext';
+import { Spinner } from '@nextui-org/spinner';
 
 type Props = {
-  carts: CartItem[];
+  cart: CartItem[];
 };
 
 const columns = [
@@ -50,41 +51,93 @@ const columns = [
   },
 ];
 
-export default function TableCart({ carts: initialCart }: Props) {
+export default function TableCart({ cart: initialCart }: Props) {
+  const { data: session } = useSession();
   const queryClient = useQueryClient();
   const router = useRouter();
-  const [listCart, setListCart] = useState<CartItem[]>(initialCart);
+  const [listItems, setListItems] = useState<CartItem[]>(
+    initialCart.sort(
+      (a, b) => Date.parse(b.created_at) - Date.parse(a.created_at)
+    )
+  );
   const setItems = useCheckout()((state) => state.setItems);
-  const { data: carts } = useQuery({
-    queryKey: ['cart'],
-    queryFn: async () => {
-      const session = await getSession();
-      const res = await getCart({ accessToken: session?.accessToken ?? '' });
+  const { data: cart, isLoading } = useQuery({
+    queryKey: ['cart', session?.accessToken],
+    queryFn: async ({ signal }) => {
+      const res = await getCart(session?.accessToken ?? '', { signal });
 
       return res.data;
     },
     initialData: initialCart,
+    enabled: !!session?.accessToken,
   });
 
-  const { mutate: cartMutate } = useMutation<
-    MojoResponse<{ message: string }>,
-    ErrorResponse,
+  const { mutate: cartMutate, isError } = useMutation<
+    MojoResponse<{ message: string }> | undefined,
+    MojoResponse<undefined>,
     {
+      accessToken: string;
       sku: string;
       quantity: number;
-    }
+    },
+    { previousCart: CartItem[] | undefined }
   >({
-    mutationFn: async ({ sku: productSku, quantity }) => {
-      const session = await getSession();
-      const accessToken = session?.accessToken ?? '';
-      const data = updateCartQuantity({ accessToken, productSku, quantity });
+    mutationKey: ['cart', { type: 'update' }],
+    mutationFn: async ({ accessToken, sku: productSku, quantity }) => {
+      const data = updateCartQuantity({
+        accessToken,
+        productSku,
+        quantity,
+      });
       return data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['cart']);
+    onMutate: async ({ accessToken, sku, quantity }) => {
+      await queryClient.cancelQueries({ queryKey: ['cart'] });
+      const previousCart = queryClient.getQueryData<CartItem[]>([
+        'cart',
+        accessToken,
+      ]);
+
+      if (previousCart) {
+        queryClient.setQueryData<CartItem[]>(
+          ['cart', accessToken],
+          previousCart.map((item) => {
+            if (item.sku === sku) {
+              item.quantity = quantity;
+            }
+            return item;
+          })
+        );
+      }
+
+      return { previousCart };
     },
-    onError: (error, variables, context) => {
-      toast.error(error.message ?? 'error occurs');
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['cart'] });
+    },
+    onError: (err, variables, context) => {
+      if (context?.previousCart) {
+        queryClient.setQueryData<CartItem[]>(
+          ['cart', variables.accessToken],
+          context.previousCart
+        );
+      }
+      if (err.code === 400) {
+        if (variables.quantity === 0) {
+          toast.error(
+            `Minimal pembelian produk (${variables.sku}) tidak terpenuhi`,
+            {
+              duration: 3000,
+            }
+          );
+          return;
+        }
+        toast.error(`Stok produk (${variables.sku}) tidak cukup`, {
+          duration: 3000,
+        });
+        return;
+      }
+      toast.error(err.errors.message ?? 'error occurs');
     },
   });
 
@@ -94,55 +147,60 @@ export default function TableCart({ carts: initialCart }: Props) {
   );
 
   const updateQty = useMemo(
-    () => (sku: string, quantity: number) => {
-      const newCart = listCart.map((cart) => {
-        if (cart.sku === sku) {
-          if (quantity !== 0) {
-            debounceCartMutate({ sku, quantity });
+    () => (accessToken: string, sku: string, quantity: number) => {
+      queryClient.cancelQueries({ queryKey: ['cart'] });
+      debounceCartMutate({ accessToken, sku, quantity });
+      setListItems((items) =>
+        items.map((item) => {
+          if (item.sku === sku) {
+            return {
+              ...item,
+              quantity,
+            };
           }
-          return {
-            ...cart,
-            quantity,
-          };
-        }
-        return cart;
-      });
-
-      setListCart(newCart);
+          return item;
+        })
+      );
     },
-    [listCart, debounceCartMutate]
+    [debounceCartMutate, queryClient]
   );
 
   useEffect(() => {
-    setListCart(carts);
-  }, [carts, setListCart]);
+    setListItems(
+      cart.sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at))
+    );
+  }, [cart]);
 
   const checoutData = useMemo(
     () =>
-      carts.map<CheckoutItem>((state) => ({
-        image: state.image.url,
-        name: state.name,
-        price: state.price,
-        quantity: state.quantity,
-        sku: state.sku,
+      cart.map<CheckoutItem>((item) => ({
+        image: item.image.url,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        sku: item.sku,
       })),
-    [carts]
+    [cart]
   );
 
-  const delteCartMutation = useMutation<
+  const deleteCartMutation = useMutation<
     MojoResponse<{ message: string }>,
     ErrorResponse,
     {
+      accessToken: string;
       sku: string;
     }
   >({
-    mutationFn: async ({ sku: productSku }) => {
-      const session = await getSession();
-      const accessToken = session?.accessToken ?? '';
+    mutationFn: async ({ accessToken, sku: productSku }) => {
       return deleteCart({ accessToken, productSku });
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['cart']);
+    },
+    onError: (_error, variables, _context) => {
+      toast.error(
+        `Delete failed, unable to remove produk (${variables.sku}) from cart`
+      );
     },
   });
 
@@ -165,7 +223,8 @@ export default function TableCart({ carts: initialCart }: Props) {
       layout='fixed'
       bottomContent={
         <CartCheckout
-          cart={listCart}
+          isDisabled={isError}
+          cart={cart}
           onClick={() => {
             setItems(checoutData);
             router.push('/order');
@@ -180,47 +239,45 @@ export default function TableCart({ carts: initialCart }: Props) {
           </TableColumn>
         )}
       </TableHeader>
-      <TableBody emptyContent={<EmptyCart />}>
-        {listCart.map((cart) => (
-          <TableRow key={cart.sku}>
+      <TableBody
+        isLoading={isLoading}
+        loadingContent={<Spinner label='Loading...' />}
+        emptyContent={<EmptyCart />}
+      >
+        {listItems.map((item) => (
+          <TableRow key={item.sku}>
             <TableCell>
               <User
-                name={cart.name}
-                description={cart.sku}
+                name={item.name}
+                description={item.sku}
                 avatarProps={{
                   radius: 'none',
-                  src: cart.image.url,
+                  src: item.image.url,
                   size: 'lg',
                 }}
               />
             </TableCell>
             <TableCell>
-              {formatIDR(cart.price, { maximumSignificantDigits: 3 })}
+              {formatIDR(item.price, { maximumSignificantDigits: 3 })}
             </TableCell>
             <TableCell>
               <input
+                min='0'
                 className='py-3 w-[70px] text-center [&::-webkit-inner-spin-button]:opacity-100 [&::-webkit-inner-spin-button]:h-10 [&::-webkit-outer-spin-button]:opacity-100 [&::-webkit-outer-spin-button]:h-10'
                 type='number'
-                value={cart.quantity.toString()}
-                onBlur={(e) => {
-                  if (cart.quantity === 0) {
-                    updateQty(cart.sku, 1);
-                  }
-                }}
+                value={item.quantity.toString()}
                 onChange={(e) => {
-                  const result = e.target.value.replace(/\D/g, '');
-                  const numQty = Number(result);
-
-                  if (!!!numQty) {
-                    updateQty(cart.sku, 0);
-                    return;
+                  e.preventDefault();
+                  const val = e.currentTarget.value || String(0);
+                  const NumVal = Number(val);
+                  if (!Number.isNaN(NumVal)) {
+                    updateQty(session?.accessToken ?? '', item.sku, NumVal);
                   }
-                  updateQty(cart.sku, numQty);
                 }}
               />
             </TableCell>
             <TableCell>
-              {formatIDR(cart.quantity * cart.price, {
+              {formatIDR(item.quantity * item.price, {
                 maximumSignificantDigits: 3,
               })}
             </TableCell>
@@ -228,7 +285,10 @@ export default function TableCart({ carts: initialCart }: Props) {
               <DeleteButton
                 ariaLabel='delete from cart'
                 onClick={() => {
-                  delteCartMutation.mutate({ sku: cart.sku });
+                  deleteCartMutation.mutate({
+                    accessToken: session?.accessToken ?? '',
+                    sku: item.sku,
+                  });
                 }}
               />
             </TableCell>

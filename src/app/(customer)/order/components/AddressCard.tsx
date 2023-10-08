@@ -3,12 +3,10 @@ import { Card, CardBody } from '@nextui-org/card';
 import { RadioGroup, Radio } from '@nextui-org/radio';
 import { Modal, ModalContent, ModalHeader, ModalBody } from '@nextui-org/modal';
 import { cn, useDisclosure } from '@nextui-org/react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import getAddresses from '@/lib/getAddresses';
-import { useEffect } from 'react';
 import { useCheckout } from '@/app/store/CheckoutContext';
-import { getSession } from 'next-auth/react';
-import useStore from '@/lib/hooks/useStore';
+import { useSession } from 'next-auth/react';
 
 type Props = {
   icon: JSX.Element;
@@ -16,37 +14,25 @@ type Props = {
 
 export default function AddressCard({ icon }: Props) {
   const checkout = useCheckout();
-  const { data: address, isLoading } = useStore(
-    checkout,
-    (state) => state.address
-  );
+  const { data: session } = useSession();
+  const queryClient = useQueryClient();
+  const address = checkout((state) => state.address);
   const setAddress = checkout((state) => state.setAddress);
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const { data: res } = useQuery({
-    queryKey: ['address'],
-    queryFn: async () => {
-      const session = await getSession();
+    queryKey: ['addresses', session?.accessToken],
+    queryFn: async ({ signal }) => {
       const accessToken = session?.accessToken ?? '';
-      const data = await getAddresses(accessToken);
+      const data = await getAddresses(accessToken, { signal });
       return data;
     },
+    initialData: () => {
+      return queryClient.getQueryData(['address']);
+    },
+    enabled: !!session?.accessToken,
   });
-
-  useEffect(() => {
-    if (!!res?.data) {
-      const defaultAddress = res.data.find((val) => val.is_primary === true);
-      const currentAddress = res.data.find((val) => val.id === address?.id);
-      if (!!currentAddress) {
-        return;
-      }
-      if (!!defaultAddress) {
-        setAddress(defaultAddress);
-        return;
-      }
-    }
-  }, [res, address, setAddress]);
 
   return (
     <>

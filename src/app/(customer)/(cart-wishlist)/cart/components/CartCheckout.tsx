@@ -6,9 +6,10 @@ import React, { useMemo } from 'react';
 type Props = {
   cart: CartItem[];
   onClick: () => void;
+  isDisabled: boolean;
 };
 
-export default function CartCheckout({ cart, onClick }: Props) {
+export default function CartCheckout({ cart, onClick, isDisabled }: Props) {
   const subTotal = useMemo(
     () =>
       cart
@@ -23,6 +24,7 @@ export default function CartCheckout({ cart, onClick }: Props) {
         <span>{formatIDR(subTotal, { maximumSignificantDigits: 3 })}</span>
       </div>
       <Button
+        isDisabled={isDisabled}
         color='primary'
         variant='solid'
         startContent={<IoBagOutline size={18} />}

@@ -22,9 +22,10 @@ export default function CategoryFilter({
 }: Props) {
   return (
     <RadioGroup
-      className='gap-1 max-w-md'
+      className='gap-1 max-sm:w-40 justify-center'
       classNames={{
-        wrapper: 'max-sm:justify-end',
+        wrapper:
+          'max-sm:justify-start flex-nowrap max-sm:overflow-x-scroll overflow-hidden',
       }}
       orientation='horizontal'
       value={currentValue}

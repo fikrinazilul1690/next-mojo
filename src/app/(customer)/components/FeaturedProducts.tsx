@@ -20,13 +20,17 @@ export default function FeaturedProducts({
   const categories = initialCategoriesRes.data;
 
   const { data: res, isLoading } = useQuery({
-    queryKey: ['product', selected],
-    queryFn: () =>
-      getProducts({
-        category: selected,
-        limit: 6,
-        offset: 0,
-      }),
+    queryKey: ['products', { featured: true, category: selected }],
+    queryFn: ({ signal }) =>
+      getProducts(
+        {
+          category: selected,
+          limit: 6,
+          offset: 0,
+          featured: true,
+        },
+        { signal }
+      ),
     initialData: () => {
       if (!!!selected) {
         return initialProductsRes;
@@ -36,7 +40,7 @@ export default function FeaturedProducts({
 
   return (
     <>
-      <div className='mb-[43px] mt-[69px] flex justify-between max-sm:mx-3'>
+      <div className='mb-[43px] mt-[69px] flex justify-between items-center max-sm:gap-4 max-sm:mx-3'>
         <h3 className='text-xl font-bold'>Featured Products</h3>
         <CategoryFilter
           categories={categories}
