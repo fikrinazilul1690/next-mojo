@@ -8,11 +8,18 @@ import { Card, CardHeader, CardBody, CardFooter } from '@nextui-org/card';
 
 export default async function Home() {
   const categoriesRes = await getCategoreis({ tags: ['category'] });
-  const productsRes = await getProducts({
-    limit: 6,
-    offset: 0,
-    featured: true,
-  });
+  const productsRes = await getProducts(
+    {
+      limit: 6,
+      offset: 0,
+      featured: true,
+    },
+    {
+      next: {
+        tags: ['product'],
+      },
+    }
+  );
   return (
     <>
       <main className='mx-auto relative'>

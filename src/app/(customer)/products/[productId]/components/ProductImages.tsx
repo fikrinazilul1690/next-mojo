@@ -1,7 +1,8 @@
 'use client';
 import { useReducer } from 'react';
 import { Card, CardBody, CardFooter } from '@nextui-org/card';
-import { Image } from '@nextui-org/image';
+// import { Image } from '@nextui-org/image';
+import Image from 'next/image';
 
 type Props = {
   product: Product;
@@ -35,35 +36,34 @@ export default function ProductImages({ product: { images } }: Props) {
 
   return (
     <Card
-      className='gap-3 w-[240px] max-sm:w-[180px] xl:w-[348px]'
+      className='gap-3 w-[240px] max-sm:w-[180px] h-full xl:w-[348px]'
       shadow='none'
       radius='none'
     >
-      <CardBody className='p-0'>
+      <CardBody className='p-0 w-full h-1/2 relative bg-foreground-200 rounded-xl'>
         <Image
           alt={state.name}
-          className='object-cover rounded-xl'
+          className='object-contain'
           src={state.url}
-          width={348}
+          fill
         />
       </CardBody>
-      <CardFooter className='p-0 justify-between'>
+      <CardFooter className='p-0 justify-start justify-self-end gap-2'>
         {images.map((image) => (
           <div
             key={image.id}
             onClick={() => {
               dispatch({ type: SelectedActionKind.SetImage, payload: image });
             }}
-            className={`w-[32%] cursor-pointer ${
+            className={`w-[32%] h-20 relative cursor-pointer ${
               image.id === state.id ? 'border-2 border-default' : ''
             }`}
           >
             <Image
-              radius='none'
               alt={image.name}
-              className='object-cover'
+              className='object-contain'
               src={image.url}
-              width={348}
+              fill
             />
           </div>
         ))}

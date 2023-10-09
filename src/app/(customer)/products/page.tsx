@@ -21,12 +21,19 @@ export default async function Products({
     : undefined;
   const page = !!searchParams?.page ? parseInt(searchParams.page as string) : 1;
   const offset = (page - 1) * limit;
-  const productsRes = await getProducts({
-    limit,
-    offset,
-    search,
-    customizable,
-  });
+  const productsRes = await getProducts(
+    {
+      limit,
+      offset,
+      search,
+      customizable,
+    },
+    {
+      next: {
+        tags: ['product'],
+      },
+    }
+  );
   const listProducts = productsRes.data || [];
   const metadata = productsRes?.metadata!;
   // console.log(metadata);

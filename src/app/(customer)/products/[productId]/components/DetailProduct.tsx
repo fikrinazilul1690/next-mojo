@@ -5,19 +5,30 @@ import ProductImages from './ProductImages';
 import ProductInformation from './ProductInformation';
 import { ChangeEvent, useState } from 'react';
 import ProductAction from './ProductAction';
+import { useQuery } from '@tanstack/react-query';
+import getProduct from '@/lib/getProduct';
 
 type Props = {
   product: Product;
 };
 
-export default function DetailProduct({ product }: Props) {
-  const initialState: Variant = product.variant.reduce((prev, curr) =>
+export default function DetailProduct({ product: initialProduct }: Props) {
+  const initialState: Variant = initialProduct.variant.reduce((prev, curr) =>
     prev.price < curr.price ? prev : curr
   );
   const [variant, setVariant] = useState<Variant>(initialState);
 
+  const { data: product } = useQuery({
+    queryKey: ['product', initialProduct.id],
+    queryFn: async () => {
+      const data = await getProduct(initialProduct.id);
+      return data!;
+    },
+    initialData: initialProduct,
+  });
+
   function onVariantChange(e: ChangeEvent<HTMLSelectElement>) {
-    const item = product?.variant.find((val) => val.sku === e.target.value);
+    const item = product.variant.find((val) => val.sku === e.target.value);
     if (!!item) {
       setVariant(item);
     }

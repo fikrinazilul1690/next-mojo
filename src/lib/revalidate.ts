@@ -6,7 +6,7 @@ export default async function revalidate({
   tag,
 }: Params): Promise<{ revalidated: boolean; now: number }> {
   const secret = process.env.NEXT_PUBLIC_MY_SECRET_TOKEN as string;
-  // console.log(secret);
+  console.log(secret);
   const response = await fetch(
     '/api/revalidate?' +
       new URLSearchParams({
